@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+governance_weekly/venv/
+
+# Database
+governance_weekly/*.db
+governance_weekly/*.db-journal
+
+# Output files
+governance_weekly/output/*.pdf
+governance_weekly/data/
+
+# Credentials
+governance_weekly/credentials.json
+governance_weekly/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test files
+governance_weekly/test_*.py
+governance_weekly/check_*.py
+governance_weekly/debug_*.py
+governance_weekly/force_*.py
+governance_weekly/regenerate_*.py
+governance_weekly/retranslate.py
+governance_weekly/fix_*.py
+governance_weekly/verify_*.py
+governance_weekly/show_*.py
+governance_weekly/preview_*.py
+governance_weekly/generate_test_*.py
+governance_weekly/reclassify_*.py
+governance_weekly/translate_all_*.py
+
+# Documentation
+governance_weekly/FILTERING_SYSTEM.md
+governance_weekly/IMPROVEMENTS.md
+
+# Fonts (optional - include if needed)
+governance_weekly/*.ttf
