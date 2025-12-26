@@ -1,6 +1,8 @@
 from scrapers.base_scraper import BaseScraper
 from extractor.article_extractor import extract_article
 import logging
+from datetime import datetime, timedelta
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +19,15 @@ class OnlineKhabarScraper(BaseScraper):
             
         links = self.extract_links(homepage_html)
         
-        # OnlineKhabar links: /2024/12/article-id
-        article_links = [l for l in links if any(year in l for year in ["/2024/", "/2025/"]) and self.domain in l]
+        # Filter by current year only (date range filtering happens in main.py)
+        today = datetime.now()
+        current_year = f"/{today.year}/"
+        
+        # OnlineKhabar links: /2025/article-id
+        article_links = [l for l in links if current_year in l and self.domain in l]
+        
+        # Exclude opinion/blog URLs
+        article_links = [l for l in article_links if not any(x in l.lower() for x in ['/opinion/', '/blog/', '/column/', '/interview/'])]
         
         article_links = list(article_links)[:self.max_articles]
         logger.info(f"Found {len(article_links)} potential articles")

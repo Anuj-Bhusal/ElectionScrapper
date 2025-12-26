@@ -1,6 +1,7 @@
 from scrapers.base_scraper import BaseScraper
 from extractor.article_extractor import extract_article
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,15 @@ class RatopatiScraper(BaseScraper):
             
         links = self.extract_links(homepage_html)
         
-        # Ratopati links: /story/{id}
-        article_links = [l for l in links if "/story/" in l and self.domain in l]
+        # Filter by current year
+        today = datetime.now()
+        current_year_pattern = str(today.year)
+        
+        # Ratopati links with year filter
+        article_links = [l for l in links if "/story/" in l and self.domain in l and current_year_pattern in l]
+        
+        # Exclude opinion/blog/interview URLs
+        article_links = [l for l in article_links if not any(x in l.lower() for x in ['/opinion/', '/blog/', '/column/', '/interview/', '/editorial/', '/bichar/', '/bisleshan/'])]
         
         article_links = list(article_links)[:self.max_articles]
         logger.info(f"Found {len(article_links)} potential articles")

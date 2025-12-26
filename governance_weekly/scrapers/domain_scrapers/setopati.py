@@ -1,6 +1,7 @@
 from scrapers.base_scraper import BaseScraper
 from extractor.article_extractor import extract_article
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,15 @@ class SetopatiScraper(BaseScraper):
             
         links = self.extract_links(homepage_html)
         
-        # Setopati links: /politics/, /social/, /kinmel/
-        article_links = [l for l in links if any(x in l for x in ["/politics/", "/social/", "/kinmel/", "/nepali-brand/"])]
+        # Filter by current year
+        today = datetime.now()
+        current_year_pattern = str(today.year)
+        
+        # Setopati links with year filter
+        article_links = [l for l in links if any(x in l for x in ["/politics/", "/social/", "/kinmel/", "/nepali-brand/"]) and current_year_pattern in l]
+        
+        # Exclude opinion/blog/story/interview URLs
+        article_links = [l for l in article_links if not any(x in l.lower() for x in ['/opinion/', '/blog/', '/column/', '/interview/', '/story/', '/editorial/', '/bichar/', '/bisleshan/'])]
         
         article_links = list(article_links)[:self.max_articles]
         logger.info(f"Found {len(article_links)} potential articles")

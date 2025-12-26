@@ -1,4 +1,5 @@
 import logging
+import time
 from config import Config
 
 logger = logging.getLogger(__name__)
@@ -75,16 +76,21 @@ class Translator:
                 translated_text = result["translatedText"]
             
             elif self.backend == "googletrans":
-                # Googletrans can be flaky, try a few times
+                # Googletrans can be flaky due to rate limiting, try with delays
                 for attempt in range(3):
                     try:
+                        # Add delay between attempts to avoid rate limiting
+                        if attempt > 0:
+                            time.sleep(1 + attempt)  # 2s, 3s delays on retries
+                        
                         result = self.googletrans.translate(text, src=source_lang, dest=target_lang)
                         translated_text = result.text
                         if translated_text and not self._contains_nepali(translated_text):
                             break # Success
                     except Exception as e:
                         logger.warning(f"Googletrans attempt {attempt+1} failed: {e}")
-                        # Re-init might help
+                        # Re-init with fresh instance
+                        time.sleep(1)
                         from googletrans import Translator as GoogleTranslator
                         self.googletrans = GoogleTranslator()
             

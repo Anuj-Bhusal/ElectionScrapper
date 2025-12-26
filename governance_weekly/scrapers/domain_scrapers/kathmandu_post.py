@@ -1,6 +1,7 @@
 from scrapers.base_scraper import BaseScraper
 from extractor.article_extractor import extract_article
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,15 @@ class KathmanduPostScraper(BaseScraper):
             
         links = self.extract_links(homepage_html)
         
-        # KP links: https://kathmandupost.com/national/2024/01/01/...
-        article_links = [l for l in links if any(x in l for x in ["/national/", "/politics/", "/investigation/"])]
+        # Filter by current year only
+        today = datetime.now()
+        current_year = f"/{today.year}/"
+        
+        # KP links with current year filter
+        article_links = [l for l in links if any(x in l for x in ["/national/", "/politics/", "/investigation/"]) and current_year in l]
+        
+        # Exclude opinion/blog/column/interview URLs
+        article_links = [l for l in article_links if not any(x in l.lower() for x in ['/opinion/', '/blog/', '/column/', '/interview/', '/editorial/', '/perspective/'])]
         
         article_links = list(article_links)[:self.max_articles]
         

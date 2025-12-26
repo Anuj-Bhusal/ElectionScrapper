@@ -4,6 +4,7 @@ print("DEBUG: Importing Extractor", flush=True)
 from extractor.article_extractor import extract_article
 print("DEBUG: Extractor Imported", flush=True)
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +21,17 @@ class EkantipurScraper(BaseScraper):
             return []
             
         # 2. Extract Links
-        # Ekantipur article links usually look like: /news/2024/01/01/title...
-        # or /business/2024...
         links = self.extract_links(homepage_html)
         
-        # Filter for likely article links (simple heuristic: has year/month or strict 'news' path)
-        article_links = [l for l in links if any(x in l for x in ["/news/", "/business/", "/national/", "/pradesh/"])]
+        # Filter by current year only
+        today = datetime.now()
+        current_year = f"/{today.year}/"
+        
+        # Filter for likely article links with current year
+        article_links = [l for l in links if any(x in l for x in ["/news/", "/business/", "/national/", "/pradesh/"]) and current_year in l]
+        
+        # Exclude opinion/blog/column/interview URLs
+        article_links = [l for l in article_links if not any(x in l.lower() for x in ['/opinion/', '/blog/', '/column/', '/interview/', '/editorial/'])]
         
         # Limit
         article_links = list(article_links)[:self.max_articles]

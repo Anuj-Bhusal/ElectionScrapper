@@ -141,20 +141,32 @@ exclude_keywords = [
     "box office", "album", "concert", "festival",
     "फुटबल", "क्रिकेट",
     
-    # Opinion & Commentary Content
-    "opinion", "op-ed", "editorial", "commentary", "column",
-    "विचार", "समीक्षा", "टिप्पणी",
+    # Opinion & Commentary Content - STRENGTHENED
+    "opinion", "op-ed", "editorial", "commentary", "column", "columnist",
+    "विचार", "समीक्षा", "टिप्पणी", "विश्लेषण",
     "my view", "my opinion", "in my opinion", "i think", "i believe",
-    "personal view", "viewpoint", "perspective",
-    "interview with", "exclusive interview", "in conversation with",
-    "अन्तर्वार्ता", "कुराकानी",
+    "personal view", "viewpoint", "perspective", "personal opinion",
+    "interview with", "exclusive interview", "in conversation with", "q&a", "qa",
+    "अन्तर्वार्ता", "कुराकानी", "अन्तर्वार्ता",
     "expert opinion", "expert view", "analyst says", "analyst view",
     "political commentary", "political opinion", "political analysis",
+    "writer's opinion", "author's view", "guest column", "guest post",
+    "opinion piece", "opinion article", "my perspective", "personal take",
+    "writes", "argues that", "opines", "suggests that",
+    "लेखक", "विचार", "टिप्पणीकार",
+    
+    # Blog & Personal Content
+    "blog", "blogger", "vlog", "vlogger", "personal story",
+    "my experience", "my journey", "diary", "memoir",
+    
+    # Analysis & Think Pieces (subjective)
+    "think piece", "deep dive", "explainer from perspective",
+    "what i learned", "lessons from", "reflections on",
     
     # Non-news Content
     "photo gallery", "photo feature", "in pictures", "gallery",
     "तस्बिर", "तस्वीर", "फोटो फिचर",
     "recipe", "cooking", "beauty", "makeup", "dating",
     "bollywood", "hollywood", "netflix", "series", "show",
-    "album", "concert", "festival"
+    "album", "concert", "festival", "video", "viral"
 ]

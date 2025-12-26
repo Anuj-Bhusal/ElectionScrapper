@@ -1,6 +1,6 @@
 import argparse
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import sys
 import json
 import sqlite3
@@ -117,14 +117,18 @@ def collect(target_scraper=None):
                 for data in articles:
                     # 1. Date filter - skip articles outside date range
                     if data.get('published_at'):
-                        # Make both timezone-naive for comparison
                         pub_date = data['published_at']
-                        if pub_date.tzinfo is not None:
+                        # Convert to timezone-naive for comparison with last_friday (which is naive)
+                        if hasattr(pub_date, 'tzinfo') and pub_date.tzinfo is not None:
                             pub_date = pub_date.replace(tzinfo=None)
                         
                         if pub_date < last_friday or pub_date > today:
                             logger.debug(f"Skipping article outside date range: {data.get('title', 'No title')[:50]} (published: {pub_date})")
                             continue
+                    else:
+                        # No published_at date - skip article (can't verify it's within range)
+                        logger.debug(f"Skipping article with no date: {data.get('title', 'No title')[:50]}")
+                        continue
                     
                     # 2. Deduplication check by URL
                     db.cursor.execute("SELECT 1 FROM articles WHERE url = ?", (data['url'],))
@@ -180,6 +184,10 @@ def collect(target_scraper=None):
                             logger.warning(f"Title translation failed for {data['url']}: {e}")
                             data['title_translated'] = "[Translation Failed]"
                         
+                        # Small delay to avoid rate limiting
+                        import time
+                        time.sleep(0.5)
+                        
                         # Translate full text (chunk if needed)
                         try:
                             full_text = data.get('full_text', '')
@@ -190,6 +198,7 @@ def collect(target_scraper=None):
                                 for chunk in chunks:
                                     trans_chunk = translator.translate(chunk, source_lang='ne', target_lang='en')
                                     translated_chunks.append(trans_chunk)
+                                    time.sleep(0.5)  # Delay between chunks
                                 data['full_text_translated'] = ' '.join(translated_chunks)
                             else:
                                 data['full_text_translated'] = translator.translate(full_text, source_lang='ne', target_lang='en')
@@ -239,8 +248,8 @@ def collect(target_scraper=None):
                         data['source_domain'],
                         data['title'],
                         data['full_text'],
-                        data.get('published_at'), # datetime object usually works with sqlite3 adapter
-                        datetime.utcnow(),
+                        data.get('published_at').isoformat() if data.get('published_at') else None,
+                        datetime.now(timezone.utc).isoformat(),
                         data.get('language', 'ne'),
                         data['title_translated'],
                         data['full_text_translated'],
