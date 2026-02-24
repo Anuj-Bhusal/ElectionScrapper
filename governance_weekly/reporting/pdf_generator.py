@@ -30,27 +30,16 @@ def build_pdf(items_by_category, out_path, date_range_str):
     flow = []
     
     # Cover Page - Compact
-    flow.append(Paragraph("Governance Weekly", styles['GovTitle']))
+    flow.append(Paragraph("Nepal Election Weekly", styles['GovTitle']))
+    flow.append(Paragraph(f"March 5, 2026 Election Coverage", styles['Normal']))
     flow.append(Paragraph(f"Date Range: {date_range_str}", styles['Normal']))
     flow.append(Spacer(1, 12))
-    flow.append(Paragraph("Top governance news from Nepal - Smart filtered for impact and relevance.", styles['Italic']))
+    flow.append(Paragraph("Election and Governance news from Nepal - Focused coverage for March 2026 Election.", styles['Italic']))
     flow.append(Spacer(1, 12))
     
-    # Content - Sort categories by priority (matching classifier priority)
+    # Content - Sort categories (Election first, then Governance)
     priority_order = [
-        "Corruption",
-        "Irregularity", 
-        "Human Rights",
-        "Gender Equality and Social Inclusion",
         "Election",
-        "Political",
-        "Service Delivery",
-        "Health",
-        "Education",
-        "Economy",
-        "Environment/Climate Change",
-        "Migration",
-        "Natural Disaster",
         "Governance"
     ]
     sorted_categories = sorted(items_by_category.keys(), 

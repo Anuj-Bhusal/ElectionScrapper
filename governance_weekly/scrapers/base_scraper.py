@@ -24,7 +24,7 @@ class BaseScraper:
         self.headers = {"User-Agent": Config.USER_AGENT}
         
     def fetch(self, url, use_selenium=False):
-        if not is_allowed(url, self.headers["User-Agent"]):
+        if not Config.SKIP_ROBOTS_CHECK and not is_allowed(url, self.headers["User-Agent"]):
             logger.warning(f"Robots.txt disallows: {url}")
             return None
             

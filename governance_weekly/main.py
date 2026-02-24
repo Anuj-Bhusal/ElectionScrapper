@@ -68,11 +68,12 @@ def collect(target_scraper=None):
     db = next(db_gen)
     print("DEBUG: Got DB connection", flush=True)
     
-    # Calculate date range: last Friday to today
+    # Calculate date range: PREVIOUS Friday to today
+    # Always goes back to last Friday, even if today is Friday
     from datetime import datetime, timedelta
     today = datetime.now()
     days_since_friday = (today.weekday() - 4) % 7  # Friday is 4
-    if days_since_friday == 0 and today.hour < 12:  # If it's Friday morning, go back a week
+    if days_since_friday == 0:  # If today IS Friday, go back to LAST Friday (7 days)
         days_since_friday = 7
     last_friday = today - timedelta(days=days_since_friday)
     last_friday = last_friday.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -278,11 +279,11 @@ def summarize_and_report():
     summarizer = Summarizer()
     
     try:
-        # Get items from last Friday to today
-        # This gives you the week's news: Friday → Thursday (when run weekly)
+        # Get items from PREVIOUS Friday to today
+        # Always goes back to last Friday, even if today is Friday
         today = datetime.now()
         days_since_friday = (today.weekday() - 4) % 7  # Friday is 4
-        if days_since_friday == 0 and today.hour < 12:  # If it's Friday morning, go back a week
+        if days_since_friday == 0:  # If today IS Friday, go back to LAST Friday (7 days)
             days_since_friday = 7
         last_friday = today - timedelta(days=days_since_friday)
         last_friday = last_friday.replace(hour=0, minute=0, second=0, microsecond=0)

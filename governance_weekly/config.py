@@ -32,6 +32,9 @@ class Config:
     # Selenium
     USE_SELENIUM = os.getenv("USE_SELENIUM", "True").lower() == "true"
     SELENIUM_HEADLESS = os.getenv("SELENIUM_HEADLESS", "True").lower() == "true"
+    
+    # Robots.txt - Skip for personal/research use
+    SKIP_ROBOTS_CHECK = os.getenv("SKIP_ROBOTS_CHECK", "True").lower() == "true"
 
 os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(Config.DB_PATH), exist_ok=True)
