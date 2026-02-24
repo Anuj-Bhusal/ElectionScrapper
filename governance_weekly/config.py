@@ -15,7 +15,8 @@ class Config:
     OUTPUT_DIR = os.path.join(BASE_DIR, "output")
     
     # Translation
-    TRANSLATION_BACKEND = os.getenv("TRANSLATION_BACKEND", "google") # google, marian, gemini
+    # Default: googletrans (free but unreliable), Recommended: gemini (free API, more reliable)
+    TRANSLATION_BACKEND = os.getenv("TRANSLATION_BACKEND", "googletrans") # googletrans, gemini, google, marian
     GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     

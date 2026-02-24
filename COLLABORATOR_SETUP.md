@@ -21,23 +21,41 @@ pip install -r governance_weekly/requirements.txt
 ### 3. Configure Environment Variables
 Create a `.env` file in the `governance_weekly/` directory:
 
+**CRITICAL: You MUST configure translation or the pipeline will fail!**
+
 ```env
+# ============================================================
+# TRANSLATION SETUP (REQUIRED - Choose ONE option below)
+# ============================================================
+
+# OPTION 1 (RECOMMENDED): Gemini API - Free & Reliable
+# Get key from: https://makersuite.google.com/app/apikey
+TRANSLATION_BACKEND=gemini
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# OPTION 2: Googletrans (Free but unreliable, often blocked)
+# TRANSLATION_BACKEND=googletrans
+# No API key needed, but may show "[Translation Failed]"
+
+# OPTION 3: Google Cloud Translate (Best quality, requires billing)
+# TRANSLATION_BACKEND=google
+# GOOGLE_APPLICATION_CREDENTIALS=credentials.json
+
+# OPTION 4: MarianMT (Local/offline, ~300MB download, slower)
+# TRANSLATION_BACKEND=marian
+# pip install transformers torch
+
+# ============================================================
+# Other Configuration
+# ============================================================
+
 # Scraping Configuration
 MAX_ARTICLES_PER_SITE=100
 RATE_LIMIT_SEC=1.0
 USER_AGENT=GovernanceWeeklyBot/1.0
 
-# Translation Backend (google, gemini, or marian)
-TRANSLATION_BACKEND=google
-
-# Google Cloud Translation API (Optional - for better translation)
-GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
-
-# Gemini API (Alternative translation - get from Google AI Studio)
-GEMINI_API_KEY=your_gemini_api_key_here
-
 # Google Drive Upload (Optional)
-DRIVE_FOLDER_ID=your_google_drive_folder_id
+DRIVE_FOLDER_ID=
 
 # Filtering Configuration
 RELEVANCE_THRESHOLD=1
@@ -52,26 +70,46 @@ SELENIUM_HEADLESS=True
 SKIP_ROBOTS_CHECK=True
 ```
 
-### 4. API Keys You May Need
+### 4. Setup Translation API (REQUIRED)
 
-#### Option A: Google Cloud Translate (Recommended for quality)
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable "Cloud Translation API"
-4. Create a Service Account and download JSON credentials
-5. Place the JSON file in `governance_weekly/` folder
-6. Update `.env` with the path: `GOOGLE_APPLICATION_CREDENTIALS=credentials.json`
+**⚠️ CRITICAL: Pipeline will fail with "[Translation Failed]" errors if this is not configured!**
 
-#### Option B: Gemini API (Free alternative)
+Choose **ONE** of these options:
+
+#### Option A: Gemini API (✅ RECOMMENDED - Free & Reliable)
 1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create an API key
-3. Add to `.env`: `GEMINI_API_KEY=your_key_here`
-4. Set `TRANSLATION_BACKEND=gemini`
+2. Sign in with Google account
+3. Click "Create API Key"
+4. Copy the key
+5. Add to `.env`:
+   ```env
+   TRANSLATION_BACKEND=gemini
+   GEMINI_API_KEY=your_actual_key_here
+   ```
 
-#### Option C: MarianMT (Local, no API needed)
-- Set `TRANSLATION_BACKEND=marian` in `.env`
-- First run will download ~300MB model
-- Slower but completely offline
+#### Option B: Googletrans (Free but Unreliable)
+- No API key needed
+- Often fails with "[Translation Failed]" due to Google blocking
+- Use only for testing
+- Add to `.env`: `TRANSLATION_BACKEND=googletrans`
+
+#### Option C: Google Cloud Translate (Best Quality, Requires Billing)
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create new project
+3. Enable "Cloud Translation API"
+4. Create Service Account → download JSON
+5. Place JSON in `governance_weekly/` folder
+6. Add to `.env`:
+   ```env
+   TRANSLATION_BACKEND=google
+   GOOGLE_APPLICATION_CREDENTIALS=credentials.json
+   ```
+
+#### Option D: MarianMT (Local/Offline)
+1. Install dependencies: `pip install transformers torch`
+2. First run downloads ~300MB model
+3. Slower but completely offline
+4. Add to `.env`: `TRANSLATION_BACKEND=marian`
 
 ### 5. (Optional) Google Drive Upload Setup
 1. Enable Google Drive API in Google Cloud Console
@@ -81,6 +119,19 @@ SKIP_ROBOTS_CHECK=True
 5. Add your Drive folder ID to `.env`
 
 ## Running the Project
+
+### Validate Setup First (Recommended)
+Before running the full pipeline, validate your setup:
+```bash
+cd governance_weekly
+python validate_setup.py
+```
+
+This will check:
+- ✓ .env file exists
+- ✓ Translation API is configured
+- ✓ All dependencies installed
+- ✓ Directories created
 
 ### Standard Weekly Run
 ```bash
@@ -142,19 +193,50 @@ Exclusion list filters out:
 
 ## Troubleshooting
 
+### Issue: "[Translation Failed]" in PDF with black squares (█)
+**Symptoms:**
+- PDF shows `[Translation Failed]` in article titles
+- Black squares or garbled text in article content
+- Logs show translation errors
+
+**Cause:** No working translation backend configured
+
+**Solution:**
+1. Check your `.env` file exists in `governance_weekly/` folder
+2. Set up Gemini API (recommended):
+   ```env
+   TRANSLATION_BACKEND=gemini
+   GEMINI_API_KEY=your_actual_key_here
+   ```
+3. Run pipeline again - should now translate properly
+
 ### Issue: Translation timeouts
-- **Solution**: Switch to Gemini or MarianMT in `.env`
+**Solution:** Switch to Gemini or MarianMT in `.env`:
+```env
+TRANSLATION_BACKEND=gemini
+GEMINI_API_KEY=your_key
+```
 
 ### Issue: No articles in PDF
-- **Solution**: Check date range - ensure articles exist from last Friday
-- Run `python check_db.py` to verify database
+**Solution:** 
+- Check date range - ensure articles exist from last Friday
+- Run: `cd governance_weekly; python debug_db.py`
+- Verify scrapers aren't blocked by checking logs
 
 ### Issue: Chrome driver errors
-- **Solution**: Update Chrome browser to latest version
+**Solution:** 
+- Update Chrome browser to latest version
 - Selenium auto-manages ChromeDriver
 
 ### Issue: Robots.txt blocking sites
-- **Solution**: Already handled - `SKIP_ROBOTS_CHECK=True` is default
+**Solution:** Already handled - `SKIP_ROBOTS_CHECK=True` is default
+
+### Issue: "No module named 'googletrans'"
+**Solution:**
+```bash
+pip install googletrans==4.0.0rc1
+```
+Or switch to Gemini backend (recommended)
 
 ## File Structure
 ```

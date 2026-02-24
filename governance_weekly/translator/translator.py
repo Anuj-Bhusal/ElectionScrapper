@@ -19,6 +19,19 @@ class Translator:
         self.backend = Config.TRANSLATION_BACKEND
         self.client = None
         self._setup_backend()
+        
+        # Validate at least one backend is working
+        if self.backend == "none":
+            logger.critical("=" * 80)
+            logger.critical("NO TRANSLATION BACKEND AVAILABLE!")
+            logger.critical("Translation will fail. Please configure one of these:")
+            logger.critical("1. GEMINI_API_KEY (recommended - free from https://makersuite.google.com)")
+            logger.critical("2. GOOGLE_APPLICATION_CREDENTIALS (Google Cloud Translate)")
+            logger.critical("3. Install googletrans: pip install googletrans==4.0.0rc1")
+            logger.critical("4. Install MarianMT: pip install transformers torch")
+            logger.critical("=" * 80)
+        else:
+            logger.info(f"Translation backend active: {self.backend}")
 
     def _setup_backend(self):
         if self.backend == "google":
@@ -42,12 +55,13 @@ class Translator:
             try:
                 import google.generativeai as genai
                 api_key = Config.GEMINI_API_KEY if hasattr(Config, 'GEMINI_API_KEY') else None
-                if api_key:
+                if api_key and api_key.strip():  # Check for non-empty key
                     genai.configure(api_key=api_key)
                     self.gemini_model = genai.GenerativeModel('gemini-2.5-flash')
                     logger.info("Gemini translation backend initialized")
                 else:
-                    logger.error("GEMINI_API_KEY not found in config")
+                    logger.error("GEMINI_API_KEY not found or empty in .env file")
+                    logger.error("Get a free key from: https://makersuite.google.com/app/apikey")
                     self.backend = "marian"
             except Exception as e:
                 logger.error(f"Failed to init Gemini: {e}")

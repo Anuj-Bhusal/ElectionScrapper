@@ -4,15 +4,28 @@ selenium>=4.16.0
 sqlalchemy>=2.0.25
 readability-lxml>=0.8.1
 reportlab>=4.0.9
-google-cloud-translate>=3.12.1
-transformers>=4.36.2
-torch>=2.1.2  # For MarianMT/Transformers
 python-dotenv>=1.0.0
-gspread>=6.0.0 # For potential google sheet integration
+lxml>=5.1.0
+fake-useragent>=1.4.0
+schedule>=1.2.1
+
+# Translation - Choose at least one:
+# Option 1: Googletrans (free but unreliable)
+googletrans==4.0.0rc1
+
+# Option 2: Gemini (recommended - requires API key)
+google-generativeai>=0.3.0
+
+# Option 3: Google Cloud Translate (requires credentials)
+google-cloud-translate>=3.12.1
+
+# Option 4: MarianMT (local/offline, heavy)
+# transformers>=4.36.2
+# torch>=2.1.2
+
+# Google Drive Upload (optional)
+gspread>=6.0.0
 google-auth>=2.26.1
 google-auth-oauthlib>=1.2.0
 google-auth-httplib2>=0.2.0
 google-api-python-client>=2.111.0
-schedule>=1.2.1
-lxml>=5.1.0
-fake-useragent>=1.4.0
