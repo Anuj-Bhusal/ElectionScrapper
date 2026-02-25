@@ -50,6 +50,18 @@ def extract_article(html, url):
             r'Published on:.*',
             r'Updated on:.*',
             r'\[.*?\]',  # [Photo Gallery] etc
+            # Site-specific boilerplate
+            r'News\s*Sign\s*In',                                         # Ekantipur login overlay
+            r'(?:^|\n)\s*Sign\s*In\s*(?:\n|$)',                          # Standalone "Sign In" line
+            r'Read\s*In\s*English',                                       # Ekantipur language toggle
+            r'Facebook\s+Messenger\s+Twitter\s+Whatsapp\s+Viber\s+Copy\s+Link',  # Share bar
+            r'What you should know',                                      # Ekantipur section header
+            r'Your browser does not support the audio element\.?',        # HTML5 audio fallback
+            r'\d+\s*Comments?\s*(?:Shares?)?',                           # OnlineKhabar comment count
+            r'Pvt\.\s+\w+[\w\s]+\d{1,2}\s+\w+\s+\d{4}\s+at\s+\d{1,2}:\d{2}',  # Author byline
+            r'[A-Z][a-z]+\s+[A-Z][a-z]+\s+\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\s+at\s+\d{1,2}:\d{2}',  # "Name Surname DD Month YYYY at HH:MM"
+            r'Falgun\s+\d+,?\s+\d{4}\s+[A-Z][a-z]+\s+[A-Z][a-z]+',   # "Falgun 8, 2082 Kedar Sivakoti"
+            r'(?:Republica|Kantipur|OnlineKhabar|Setopati|Ratopati)\s+(?:Online|Media|Staff)',  # Source tags
         ]
         
         for pattern in junk_patterns:

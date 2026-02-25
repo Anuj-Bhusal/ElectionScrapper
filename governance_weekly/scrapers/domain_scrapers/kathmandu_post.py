@@ -32,7 +32,7 @@ class KathmanduPostScraper(BaseScraper):
         
         results = []
         for link in article_links:
-            html = self.fetch(link)
+            html = self.fetch(link, use_selenium=True)  # KP requires JS rendering
             if html:
                 data = extract_article(html, link)
                 if data and data['title']:
